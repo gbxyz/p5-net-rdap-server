@@ -196,16 +196,41 @@ sub handle_request {
         $response->code(404);
         $response->message('Not Found');
 
-        if (exists($self->{_handlers}->{$request->type}->{$request->method})) {
-            eval {
-                if ($self->is_object($request->type)) {
-                    if (!$request->object) {
-                        $response->error(400, 'Bad Request');
+        #
+        # Is a handler installed for this combination of type and method?
+        #
+        if (exists($self->{_handlers}->{$request->type})) {
+            if (!exists($self->{_handlers}->{$request->type}->{$request->method})) {
+                $response->error(405, 'Bad Method');
 
-                    } else {
+            } else {
+                #
+                # Wrap callbacks in eval to catch exceptions so we can send a
+                # 500 response.
+                #
+                eval {
+                    if (!$self->is_object($request->type)) {
+                        #
+                        # Help or search request.
+                        #
                         $self->{_handlers}->{$request->type}->{$request->method}->($response);
 
+                    } else {
+                        #
+                        # Object lookup.
+                        #
+                        if (!$request->object) {
+                            #
+                            # Request did not specify an object.
+                            #
+                            $response->error(400, 'Bad Request');
+
+                        } else {
+                            $self->{_handlers}->{$request->type}->{$request->method}->($response);
+
+                        }
                     }
+                };
 
                 if ($@) {
                     #
