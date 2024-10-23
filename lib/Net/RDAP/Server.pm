@@ -30,10 +30,10 @@ $VERSION    = '0.01';
     #
     # Set request handlers for the types we want to support.
     #
-    $server->set_handler('GET',  'help',   \&get_help);
-    $server->set_handler('HEAD', 'help',   \&head_help);
-    $server->set_handler('GET',  'domain', \&get_domain);
-    $server->set_handler('HEAD', 'domain', \&head_domain);
+    $server->set_handler(GET  => 'help',   \&get_help);
+    $server->set_handler(HEAD => 'help',   \&head_help);
+    $server->set_handler(GET  => 'domain', \&get_domain);
+    $server->set_handler(HEAD => 'domain', \&head_domain);
 
     #
     # Run the server (on localhost:8080 by default).
@@ -173,16 +173,19 @@ sub handle_request {
     my ($self, $cgi) = @_;
 
     #
-    # Initialise request and response objects
+    # Initialise request and response objects.
     #
     my $request = Net::RDAP::Server::Request->from_cgi($cgi);
     my $response = Net::RDAP::Server::Response->new($request, $self);
 
     #
-    # set the Server: header on all responses
+    # Set the Server: header on all responses.
     #
     $response->header('server' => sprintf('%s/%s', ref($self), $VERSION));
 
+    #
+    # Check the HTTP method.
+    #
     if (!$self->method_allowed($request->method)) {
         $response->error(405, 'Bad Method');
 
@@ -204,23 +207,25 @@ sub handle_request {
 
                     }
 
-                } else {
-                    $self->{_handlers}->{$request->type}->{$request->method}->($response);
+                if ($@) {
+                    #
+                    # Log error message to STDERR.
+                    #
+                    print STDERR $@;
 
+                    $response->error(500, 'Internal Server Error');
                 }
-            };
-
-            if ($@) {
-                print STDERR $@;
-                $response->error(500, 'Internal Server Error');
             }
         }
     }
 
+    #
+    # Ensure Content-Length header is present for responses to GET requests.
+    #
     $response->header('content-length' => length($response->content)) unless (q{HEAD} eq $request->method);
 
     #
-    # log to STDERR use the Combined Log Format
+    # Log to STDERR using the Combined Log Format.
     #
     print STDERR sprintf(
         "%s - - [%s] \"%s %s %s\" %03u %u \"%s\" \"%s\"\n",
@@ -236,7 +241,7 @@ sub handle_request {
     );
 
     #
-    # send the response
+    # Send the response.
     #
     print HTTP_VERSION.' '.$response->as_string;
 }

@@ -86,10 +86,13 @@ for help queries and searches.
 sub object {
     my $self = shift;
 
+    # get the segments from the path...
     my @segments = grep { length > 0 } $self->uri->path_segments;
 
+    # remove the leading value (which is the type)
     shift(@segments);
 
+    # join the remaining segments (because CIDR prefixes will contain a slash)
     return join('/', @segments);
 }
 
