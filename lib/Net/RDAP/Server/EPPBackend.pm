@@ -5,6 +5,7 @@ use List::Util qw(any);
 use JSON::PP;
 use Net::EPP::Simple;
 use Net::RDAP::EPPStatusMap;
+use Net::EPP::ResponseCodes;
 use vars qw($EVENTS $CONTACTS);
 use common::sense;
 
@@ -143,9 +144,21 @@ sub head_domain {
 sub get_domain {
     my ($self, $response) = @_;
 
-    if (my $info = $self->epp->domain_info($response->request->object)) {
+    my $info = $self->epp->domain_info($response->request->object);
+
+    if ($info) {
         $response->ok;
         $response->content($self->generate_domain_record($info));
+
+    } elsif (OBJECT_DOES_NOT_EXIST == $Net::EPP::Simple::Code) {
+        $response->error(404, $Net::EPP::Simple::Error);
+
+    } elsif (AUTHORIZATION_ERROR == $Net::EPP::Simple::Code) {
+        $response->error(403, $Net::EPP::Simple::Error);
+
+    } else {
+        $response->error(504, $Net::EPP::Simple::Error);
+
     }
 }
 
@@ -183,13 +196,15 @@ sub generate_dnssec {
         };
 
     } elsif ($info->{DNSKEY}) {
-        my $secureDNS = {
+        return {
             delegationSigned => $JSON::PP::true,
             keyData => $self->generate_dnssec_keydata($info->{DNSKEY}),
         };
 
     } else {
-        return { delegationSigned => $JSON::PP::false };
+        return {
+            delegationSigned => $JSON::PP::false,
+        };
 
     }
 }
