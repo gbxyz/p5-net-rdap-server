@@ -27,7 +27,7 @@ use common::sense;
 =head1 DESCRIPTION
 
 L<Net::RDAP::Server::EPPBackend> implements an RDAP server that answers RDAP
-queries using data retrieved from an RDAP server. It is based on
+queries using data retrieved from an EPP server. It is based on
 L<Net::RDAP::Server>, and uses L<Net::EPP::Simple> to talk to the EPP server.
 
 =head2 EPP SERVER INTEGRATION
