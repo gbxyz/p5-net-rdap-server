@@ -242,7 +242,7 @@ sub generate_dnssec_keydata {
             flags       => int($key->[0]),
             protocol    => int($key->[1]),
             algorithm   => int($key->[2]),
-            publicKey   => int($key->[3]),
+            publicKey   => $key->[3],
         });
     }
 
