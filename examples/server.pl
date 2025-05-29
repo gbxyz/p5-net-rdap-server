@@ -1,4 +1,4 @@
-#!perl
+#!/usr/bin/env perl
 use Net::RDAP::Server;
 use constant ABOUT_URL => 'https://about.rdap.org';
 use strict;
