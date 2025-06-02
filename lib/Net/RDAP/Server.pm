@@ -327,4 +327,17 @@ sub check_handlers {
     }
 }
 
+=pod
+
+=head1 SEE ALSO
+
+=over
+
+=item * L<Net::RDAP::Server::EPPBackend> - an RDAP server that retrieves
+registration data from an EPP server.
+
+=back
+
+=cut
+
 1;
