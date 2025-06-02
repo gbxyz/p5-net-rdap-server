@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# PODNAME: a minimal RDAP server.
 use Net::RDAP::Server;
 use constant ABOUT_URL => 'https://about.rdap.org';
 use strict;
@@ -45,8 +46,6 @@ sub head_domain { shift->ok }
 
 sub get_domain {
     my $response = shift;
-
-    my $now = DateTime->now;
 
     $response->ok;
 
