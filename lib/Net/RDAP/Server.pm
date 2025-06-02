@@ -13,7 +13,7 @@ use strict;
 use vars qw($VERSION @METHODS @OBJECTS @SEARCHES @TYPES);
 use warnings;
 
-$VERSION    = '0.05';
+$VERSION    = '0.06';
 @METHODS    = qw(HEAD GET);
 @OBJECTS    = qw(domain nameserver entity ip autnum);
 @SEARCHES   = qw(domains nameservers entities);

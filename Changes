@@ -1,6 +1,6 @@
 Revision history for perl module Net::RDAP:
 
-0.05 - 2025-06-02
+0.06 - 2025-06-02
   - fix publicKey property of keyData objects.
   - added examples/rdap-epp.pl which runs an RDAP server with the EPP backend
   - added Docker Compose file.
