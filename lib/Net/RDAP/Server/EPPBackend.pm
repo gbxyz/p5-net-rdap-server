@@ -326,8 +326,10 @@ sub generate_entity {
         roles           => $roles,
     };
 
-    if (my $cinfo = $self->epp->contact_info($handle)) {
-        $entity->{vcardArray} = $self->generate_vcardArray($cinfo);
+    if (1 < scalar(@{$roles}) || q{registrar} ne $roles->[0]) {
+        if (my $cinfo = $self->epp->contact_info($handle)) {
+            $entity->{vcardArray} = $self->generate_vcardArray($cinfo);
+        }
     }
 
     return $entity;
