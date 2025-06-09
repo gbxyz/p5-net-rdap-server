@@ -1,12 +1,13 @@
 package Net::RDAP::Server::EPPBackend;
 # ABSTRACT: an RDAP server that retrieves registration data from an EPP server.
-use base qw(Net::RDAP::Server);
+use Carp;
 use DateTime;
-use List::Util qw(any);
 use JSON::PP;
+use List::Util qw(any);
+use Net::EPP::ResponseCodes;
 use Net::EPP::Simple;
 use Net::RDAP::EPPStatusMap;
-use Net::EPP::ResponseCodes;
+use base qw(Net::RDAP::Server);
 use vars qw($EVENTS $CONTACTS);
 use common::sense;
 
@@ -85,10 +86,14 @@ $CONTACTS = {
     billing => q{billing},
 };
 
+#
+# initialise the connection to the EPP server.
+#
 sub set_backend {
     my ($self, %args) = @_;
 
     $self->{_epp} = Net::EPP::Simple->new(%args);
+    croak(sprintf(q{connection to EPP server failed: %s (%u)}, $Net::EPP::Simple::Message, $Net::EPP::Simple::Code)) unless ($self->{_epp});
 
     $self->set_handlers;
 
