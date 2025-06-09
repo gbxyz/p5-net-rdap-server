@@ -93,7 +93,7 @@ sub set_backend {
     my ($self, %args) = @_;
 
     $self->{_epp} = Net::EPP::Simple->new(%args);
-    croak(sprintf(q{connection to EPP server failed: %s (%u)}, $Net::EPP::Simple::Message, $Net::EPP::Simple::Code)) unless ($self->{_epp});
+    croak(sprintf(q{connection to EPP server failed: %s (%u)}, $Net::EPP::Simple::Error, $Net::EPP::Simple::Code)) unless ($self->{_epp});
 
     $self->set_handlers;
 
