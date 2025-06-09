@@ -1,6 +1,7 @@
 package Net::RDAP::Server::EPPBackend;
 # ABSTRACT: an RDAP server that retrieves registration data from an EPP server.
 use base qw(Net::RDAP::Server);
+use DateTime;
 use List::Util qw(any);
 use JSON::PP;
 use Net::EPP::Simple;
@@ -282,6 +283,11 @@ sub generate_events {
     my ($self, $info) = @_;
 
     my @events;
+
+    push(@events, {
+        eventAction => q{last update of RDAP database},
+        eventDate   => DateTime->now->iso8601,
+    });
 
     foreach my $key (grep { exists($info->{$_}) } keys(%{$EVENTS})) {
         my $event = {
