@@ -264,7 +264,14 @@ sub generate_status {
 #
 sub generate_nameservers {
     my ($self, $info) = @_;
-    return [ map { { objectClassName => q{nameserver}, ldhName => $_ } } @{$info->{ns}} ],
+
+    my @nameservers;
+
+    foreach my $ns (@{$info->{ns}}) {
+        push(@nameservers, { objectClassName => q{nameserver}, ldhName => (q{HASH} eq ref($ns) ? $ns->{name} : $ns) });
+    }
+
+    return \@nameservers;
 }
 
 #
